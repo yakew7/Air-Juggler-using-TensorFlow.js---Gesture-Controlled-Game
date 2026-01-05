@@ -13,6 +13,7 @@ let gameState = {
   balls: [],
   hands: [],
   score: 0,
+  bounceScore: 0,
   gameOver: false,
   startTime: null,
   animationId: null,
@@ -98,8 +99,8 @@ function checkCollisions() {
         ball.lastHitTime = now;
 
         // Score 
-        gameState.touchScore += 1;
-        touchScoreDisplay.textContent = gameState.touchScore;
+        gameState.bounceScore += 1;
+        touchScoreDisplay.textContent = gameState.bounceScore;
 
         // Physics 
         ball.vy = config.bounceVelocity;
@@ -248,7 +249,7 @@ async function startGame() {
   gameState.hands = [];
   gameState.countdown = config.countdownTime;
   gameState.isCountingDown = true;
-  gameState.touchScore = 0;
+  gameState.bounceScore = 0;
   touchScoreDisplay.textContent = "0";
 
   initBalls();
@@ -302,12 +303,18 @@ function endGame() {
       : gameState.score > 15
         ? "Great Job!"
         : "Game Over!";
-
+  const avg =
+    gameState.bounceScore === 0
+      ? "0.00"
+      : (gameState.bounceScore / gameState.score).toFixed(2);
+      
   overlayMessage.innerHTML = `
         <div style="font-size: 3rem; margin-bottom: 0.5rem;">${emoji}</div>
         <div style="font-size: 2rem; margin-bottom: 0.5rem;">${message}</div>
         <div style="font-size: 1.2rem; color: #666; font-family: 'Poppins', sans-serif; font-weight: 600;">
             You survived ${gameState.score} seconds
+            You did ${gameState.bounceScore} bounces <br>
+            Avg bounces / sec: ${avg}
         </div>
     `;
   startButton.textContent = "Play Again";
